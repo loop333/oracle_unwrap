@@ -42,10 +42,10 @@ begin
  --  type, owner and object name (package, package body, procedure or function) to unwrap 
  for c in (select line, text from dba_source where type = 'PACKAGE BODY' and owner = 'OWNER' and name = 'PACKAGE BODY NAME' order by line) loop
   if c.line = 1 then
-   b64_len := to_number(regexp_substr(regexp_substr(c.text, '^[0-9a-f]+ [0-9a-f]+$', 1, 1, 'm'), '[0-9a-f]+', 1, 2),'XXXXXXXXXX');
-   dbms_lob.append(tmp, utl_raw.cast_to_raw(replace(substr(c.text, regexp_instr(c.text,'^[0-9a-f]+ [0-9a-f]+$', 1, 1, 1, 'm')), chr(10), '')));
+   b64_len := to_number(regexp_substr(regexp_substr(c.text, '^[0-9a-f]+ [0-9a-f]+$', 1, 1, 'm'), '[0-9a-f]+', 1, 2), 'XXXXXXXXXX');
+   dbms_lob.append(tmp, utl_raw.cast_to_raw(replace(substr(c.text, regexp_instr(c.text, '^[0-9a-f]+ [0-9a-f]+$', 1, 1, 1, 'm')), chr(10), '')));
   else
-   dbms_lob.append(tmp, utl_raw.cast_to_raw(replace(c.text,chr(10), '')));
+   dbms_lob.append(tmp, utl_raw.cast_to_raw(replace(c.text, chr(10), '')));
   end if;
  end loop;  
  -- dbms_output.put_line(dbms_lob.getlength(tmp));
