@@ -21,7 +21,7 @@ declare
   '72 E7 B2 54 B7 2A C7 73 90 66 20 0E 51 ED F8 7C' ||
   '8F 2E F4 12 C6 2B 83 CD AC CB 3B C4 4E C0 69 36' ||
   '62 02 AE 88 FC AA 42 08 A6 45 57 D3 9A BD E1 23' ||
-  '8D 92 4A 11 89 74 6B 91 FB FE C9 01 EA 1B F7 CE' ,' ',''));
+  '8D 92 4A 11 89 74 6B 91 FB FE C9 01 EA 1B F7 CE' , ' ', ''));
 
  v_offset      integer;
  v_buffer_size binary_integer := 4800;
@@ -42,8 +42,8 @@ begin
  --  type, owner and object name (package, package body, procedure or function) to unwrap 
  for c in (select line, text from dba_source where type = 'PACKAGE BODY' and owner = 'OWNER' and name = 'PACKAGE BODY NAME' order by line) loop
   if c.line = 1 then
-   b64_len := to_number(regexp_substr(regexp_substr(c.text, '^[0-9a-f]+ [0-9a-f]+$',1,1,'m'), '[0-9a-f]+', 1, 2),'XXXXXXXXXX');
-   dbms_lob.append(tmp, utl_raw.cast_to_raw(replace(substr(c.text, regexp_instr(c.text,'^[0-9a-f]+ [0-9a-f]+$',1,1,1,'m')), chr(10), '')));
+   b64_len := to_number(regexp_substr(regexp_substr(c.text, '^[0-9a-f]+ [0-9a-f]+$', 1, 1, 'm'), '[0-9a-f]+', 1, 2),'XXXXXXXXXX');
+   dbms_lob.append(tmp, utl_raw.cast_to_raw(replace(substr(c.text, regexp_instr(c.text,'^[0-9a-f]+ [0-9a-f]+$', 1, 1, 1, 'm')), chr(10), '')));
   else
    dbms_lob.append(tmp, utl_raw.cast_to_raw(replace(c.text,chr(10), '')));
   end if;
@@ -57,7 +57,7 @@ begin
 
  v_offset := 1;
  for i in 1 .. ceil(dbms_lob.getlength(tmp)/v_buffer_size) loop
-  dbms_lob.read(tmp,v_buffer_size,v_offset,v_buffer_raw);
+  dbms_lob.read(tmp, v_buffer_size, v_offset, v_buffer_raw);
   v_buffer_raw := utl_encode.base64_decode(v_buffer_raw);
   dbms_lob.writeappend(tmp2, utl_raw.length(v_buffer_raw), v_buffer_raw);
   v_offset := v_offset + v_buffer_size;
